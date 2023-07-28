@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"github.com/davecgh/go-spew/spew"
@@ -91,6 +90,5 @@ func EncodeDataFromFile(p string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	s := base64.StdEncoding.EncodeToString(bs)
-	return s, err
+	return string(bs), err
 }
