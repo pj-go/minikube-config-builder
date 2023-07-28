@@ -79,8 +79,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("result: ")
-	fmt.Println(string(rbs))
+
+	err = os.WriteFile(kubeconfig, rbs, 0600)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func EncodeDataFromFile(p string) (string, error) {
