@@ -1,4 +1,4 @@
-module minikube-config-builder
+module github.com/pj-go/minikube-config-builder
 
 go 1.20
 
