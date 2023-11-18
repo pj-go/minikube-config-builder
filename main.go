@@ -15,11 +15,13 @@ var (
 	kubeconfig            string
 	apiServer             string
 	DefaultKubeconfigPath = filepath.Join(homedir.HomeDir(), ".kube", "config")
+	out                   string
 )
 
 func init() {
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Paths to a kubeconfig.")
 	flag.StringVar(&apiServer, "apiServer", "", "format: https://ip:port")
+	flag.StringVar(&out, "out", "", "output file")
 }
 
 func main() {
@@ -48,8 +50,8 @@ func main() {
 			if len(apiServer) > 0 {
 				cluster.Cluster.Server = apiServer
 			}
+			config.Clusters[i] = cluster
 		}
-		config.Clusters[i] = cluster
 	}
 
 	for i, info := range config.AuthInfos {
@@ -70,19 +72,26 @@ func main() {
 				info.AuthInfo.ClientKeyData = []byte(s)
 				info.AuthInfo.ClientKey = ""
 			}
+			config.AuthInfos[i] = info
 		}
-		config.AuthInfos[i] = info
 	}
 
 	rbs, err := yaml.Marshal(config)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(string(rbs))
 
-	err = os.WriteFile(kubeconfig, rbs, 0600)
+	if len(out) == 0 {
+		out = fmt.Sprintf("%s.out", kubeconfig)
+	}
+	err = os.WriteFile(out, rbs, 0600)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("source file: %s\n", kubeconfig)
+	fmt.Printf("output file: %s\n", out)
+	fmt.Println("successful!!!")
 }
 
 func EncodeDataFromFile(p string) (string, error) {
